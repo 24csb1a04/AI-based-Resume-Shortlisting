@@ -108,30 +108,18 @@ def classify_document(content: str) -> str:
     client = get_openai_client()
     deployment = "************"
     system_prompt = (
-        "You are a classifier for recruitment documents.\n"
-        "You receive the full text content of a PDF.\n"
-        "Classify it into exactly one of these categories:\n"
-        "- JD: A job description / job posting / role description.\n"
-        "- CV: A curriculum vitae, résumé, or candidate profile.\n"
-        "- OTHER: Anything else (reports, articles, invoices, forms, etc.).\n"
-        "Output only the label: JD, CV, or OTHER. No explanation."
+        "<system prompt>"
     )
 
     user_prompt = (
-        "Document text:\n"
-        "```text\n"
-        f"{content}\n"
-        "```\n"
-        "What is the correct label (JD, CV, or OTHER) for this document? "
-        "Output only the label."
+        "<user prompt>"
     )
 
     try:
         response = client.chat.completions.create(
             model=deployment,
             messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
+                "<messages >"
             ],
             max_tokens=5,
             temperature=0.0,
@@ -152,38 +140,18 @@ def extract_skills_from_jd(jd_text: str) -> List[str]:
     client = get_openai_client()
     deployment = os.environ["OPENAI_DEPLOYMENT_NAME"]
     system_prompt = (
-        "You analyze job descriptions and extract the 8 most important required skills.\n"
-        "Skills should be short capability phrases, e.g., 'Python programming', "
-        "'Project management', 'Stakeholder communication'.\n"
-        "Apart from these 8 skills there will be two additional skills.\n"
-        "One of them is exactly : 'Bachelors/Masters degree from premier institute'.\n"
-        "The other one is exactly: 'Work experience in premier company in decent job role'.\n"
-        "Finally, return exactly 10 unique skills in JSON format ONLY, with no extra text, "
-        "no markdown, no explanation."
+        "<system_prompt>"
     )
 
     user_prompt = (
-        "Here is the full text of a job description:\n"
-        "```text\n"
-        f"{jd_text}\n"
-        "```\n"
-        "Extract the 10 most important required skills for this job.\n"
-        "Return JSON only, like:\n"
-        "{\n"
-        '  \"skills\": [\n'
-        '    \"Skill 1\",\n'
-        '    \"Skill 2\",\n'
-        "    ...\n"
-        "  ]\n"
-        "}"
+        "<user_prompt>"
     )
 
     try:
         response = client.chat.completions.create(
             model=deployment,
             messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
+                "<messages>"
             ],
             max_tokens=512,
             temperature=0.0,
@@ -325,42 +293,18 @@ def score_cv_against_skills(
     )
 
     system_prompt = (
-        "You are evaluating a candidate CV against a list of 10 required job skills.\n"
-        "For each skill, assign a score from 0 to 10 based on semantic relevance "
-        "of the candidate's experience to that skill.\n"
-        "Consider synonyms, related tools and responsibilities, and implied knowledge. "
-        "Do not rely on exact keyword matching.\n"
-        "For skills regarding education insitutes/degrees or job roles/company experience make use of web \n"
-        "to detemine the prestige of instituion , degree / company , job role \n"
-        "A score of 0 means no evidence; 10 means very strong depth and relevance.\n"
-        "Return JSON only."
+        "<system prompt>"
     )
 
     user_prompt = (
-        "Required skills:\n"
-        f"{skills_list_text}\n\n"
-        "CV full text:\n"
-        "```text\n"
-        f"{cv_text}\n"
-        "```\n"
-        "For each skill, assign a score from 0 to 10 (numbers only), then compute "
-        "the average of the 10 scores (0-10).\n"
-        "Return JSON only, like:\n"
-        "{\n"
-        '  \"skills\": [\n'
-        '    {\"name\": \"Skill 1\", \"score\": 0-10},\n'
-        "    ...\n"
-        "  ],\n"
-        '  \"total_score\": 0-10\n'
-        "}"
+       "user prompt>"
     )
 
     try:
         response = client.chat.completions.create(
             model=deployment,
             messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
+                "<messages>"
             ],
             max_tokens=512,
             temperature=0.0,

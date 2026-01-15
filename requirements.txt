@@ -1,0 +1,6 @@
+azure-functions
+azure-storage-blob
+requests
+pyPDF2
+openpyxl
+openai
